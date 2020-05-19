@@ -4,14 +4,16 @@ import ContactItem from './ContactItem'
 
 const Contacts = () => {
  const contactContext = useContext(ContactContext)
- const {contacts} = contactContext
- console.log(contacts)
+ const {contacts, filtered} = contactContext
+ if (contacts.length === 0) {
+  return 'Dodaj swoj pierwszy kontakt'
+ }
 
  return (
   <>
-   {contacts.map((item, index) => (
-    <ContactItem key={index} contact={item} />
-   ))}
+   {filtered !== null
+    ? filtered.map((item, index) => <ContactItem key={index} contact={item} />)
+    : contacts.map((item, index) => <ContactItem key={index} contact={item} />)}
   </>
  )
 }
