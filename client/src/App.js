@@ -12,6 +12,11 @@ import Login from './components/auth/Login'
 import Routes from './routes'
 import AlertState from './context/alert/AlerState'
 import Alerts from './components/Alerts'
+import setAuthToken from './components/utils/setAuthToken'
+
+if (localStorage.token) {
+ setAuthToken(localStorage.token)
+}
 
 function App() {
  return (

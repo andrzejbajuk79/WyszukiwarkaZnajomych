@@ -1,36 +1,43 @@
-import React, {useContext, Fragment} from 'react'
+import React, {useEffect, useContext, Fragment} from 'react'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import ContactContext from '../../context/contact/contactContext'
 import ContactItem from './ContactItem'
-
+import Spinner from '../Spinner/Spinner'
 const Contacts = () => {
  const contactContext = useContext(ContactContext)
- const {contacts, filtered} = contactContext
- if (contacts.length === 0) {
-  return 'Dodaj swoj pierwszy kontakt'
+
+ const {contacts, filtered, getContacts, loading} = contactContext
+
+ useEffect(() => {
+  getContacts()
+  // eslint-disable-next-line
+ }, [])
+
+ if (contacts !== null && contacts.length === 0 && !loading) {
+  return <h4>Please add a contact</h4>
  }
 
  return (
   <Fragment>
-   {contacts !== null ? (
+   {contacts !== null && !loading ? (
     <TransitionGroup>
      {filtered !== null
-      ? filtered.map((contact, index) => (
-         <CSSTransition key={index} timeout={500} classNames="item">
+      ? filtered.map((contact) => (
+         <CSSTransition key={contact._id} timeout={500} classNames="item">
           <ContactItem contact={contact} />
          </CSSTransition>
         ))
-      : contacts.map((contact, index) => (
-         <CSSTransition key={index} timeout={500} classNames="item">
+      : contacts.map((contact) => (
+         <CSSTransition key={contact._id} timeout={500} classNames="item">
           <ContactItem contact={contact} />
          </CSSTransition>
         ))}
     </TransitionGroup>
    ) : (
-    // <Spinner />
-    'loading ...'
+    <Spinner />
    )}
   </Fragment>
  )
 }
+
 export default Contacts

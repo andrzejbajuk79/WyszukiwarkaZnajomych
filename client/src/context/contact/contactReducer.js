@@ -1,41 +1,82 @@
-import * as actions from '../types'
+import {
+ GET_CONTACTS,
+ ADD_CONTACT,
+ DELETE_CONTACT,
+ SET_CURRENT,
+ CLEAR_CURRENT,
+ UPDATE_CONTACT,
+ FILTER_CONTACTS,
+ CLEAR_FILTER,
+ CONTACT_ERROR,
+ CLEAR_CONTACTS,
+} from '../types'
 
 export default (state, action) => {
- const {type, payload} = action
- switch (type) {
-  case actions.ADD_CONTACT:
-   return {...state, contacts: [...state.contacts, payload]}
-  case actions.DELETE_CONTACT:
+ switch (action.type) {
+  case GET_CONTACTS:
    return {
     ...state,
-    contacts: state.contacts.filter((contact) => contact.id !== payload),
+    contacts: action.payload,
+    loading: false,
    }
-  case actions.SET_CURRENT:
-   return {...state, current: payload}
-  case actions.CLEAR_CURRENT:
-   return {...state, current: null}
-  case actions.UPDATE_CONTACT:
+  case ADD_CONTACT:
    return {
     ...state,
-    contacts: state.contacts.map((contact) => {
-     return contact.id === payload.id ? payload : contact
-    }),
+    contacts: [action.payload, ...state.contacts],
+    loading: false,
    }
-
-  case actions.FILTER_CONTACTS:
+  case UPDATE_CONTACT:
+   return {
+    ...state,
+    contacts: state.contacts.map((contact) =>
+     contact._id === action.payload._id ? action.payload : contact
+    ),
+    loading: false,
+   }
+  case DELETE_CONTACT:
+   return {
+    ...state,
+    contacts: state.contacts.filter(
+     (contact) => contact._id !== action.payload
+    ),
+    loading: false,
+   }
+  case CLEAR_CONTACTS:
+   return {
+    ...state,
+    contacts: null,
+    filtered: null,
+    error: null,
+    current: null,
+   }
+  case SET_CURRENT:
+   return {
+    ...state,
+    current: action.payload,
+   }
+  case CLEAR_CURRENT:
+   return {
+    ...state,
+    current: null,
+   }
+  case FILTER_CONTACTS:
    return {
     ...state,
     filtered: state.contacts.filter((contact) => {
-     const regex = new RegExp(`${payload}`, 'gi')
-     if (contact.email) {
-      return contact.name.match(regex) || contact.email.match(regex)
-     } else {
-      return contact.name.match(regex)
-     }
+     const regex = new RegExp(`${action.payload}`, 'gi')
+     return contact.name.match(regex) || contact.email.match(regex)
     }),
    }
-  case actions.CLEAR_FILTER:
-   return {...state, filtered: null}
+  case CLEAR_FILTER:
+   return {
+    ...state,
+    filtered: null,
+   }
+  case CONTACT_ERROR:
+   return {
+    ...state,
+    error: action.payload,
+   }
   default:
    return state
  }

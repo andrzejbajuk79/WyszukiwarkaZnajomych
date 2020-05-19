@@ -1,15 +1,41 @@
-import React from 'react'
+import React, {useContext, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {Link} from 'react-router-dom'
 import {NavLink} from '../utils/NavLink'
+import AuthContext from '../../context/auth/authContext'
+import ContactContext from '../../context/contact/contactContext'
 
 const Navbar = ({title, icon}) => {
- const pageLinks = [
-  {to: '/', label: 'Home'},
-  {to: '/about', label: 'About'},
-  {to: '/login', label: 'Login'},
-  {to: '/register', label: 'Register', icon: 'ion-compose'},
- ]
+ const authContext = useContext(AuthContext)
+ const contactContext = useContext(ContactContext)
+ const {isAuthenticated, logout, user, loadUser} = authContext
+ const {clearContacts} = contactContext
+ let pageLinks
+
+ if (isAuthenticated) {
+  pageLinks = [
+   {to: '/', label: 'Home'},
+   {to: '/about', label: 'About'},
+   // {to: '/logout', label: 'Logout', icon: 'fas fa-sign-out-alt'},
+  ]
+ } else {
+  pageLinks = [
+   {to: '/login', label: 'Login'},
+   {to: '/register', label: 'Register', icon: 'ion-compose'},
+  ]
+ }
+ useEffect(() => {
+  loadUser()
+  // eslint-disable-next-line
+ }, [])
+
+ const onLogout = () => {
+  console.log('test')
+
+  logout()
+  clearContacts()
+ }
+
  return (
   <div className="navbar bg-primary">
    <h1>
@@ -19,6 +45,17 @@ const Navbar = ({title, icon}) => {
     {pageLinks.map((page, index) => (
      <NavLink key={index} {...page} />
     ))}
+    {user && (
+     <>
+      <li>
+       <a onClick={onLogout} href="#!">
+        <i className="fas fa-sign-out-alt" />{' '}
+        <span className="hide-sm">Logout</span>
+       </a>
+      </li>
+      <li>Hello {user && user.name} </li>
+     </>
+    )}
    </ul>
   </div>
  )

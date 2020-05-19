@@ -5,15 +5,13 @@ import PropTypes from 'prop-types'
 const ContactItem = ({contact}) => {
  const contactContext = useContext(ContactContext)
  const {deleteContact, setCurrent, clearCurrent} = contactContext
- const {name, id, email, phone, type} = contact
+ const {name, _id, email, phone, type} = contact
 
  const onDelete = () => {
-  deleteContact(id)
+  deleteContact(_id)
   clearCurrent()
  }
- const onEdit = (contact) => {
-  setCurrent(contact)
- }
+
  return (
   <div className="card bg-light">
    <h3 className="text-primary text-left">

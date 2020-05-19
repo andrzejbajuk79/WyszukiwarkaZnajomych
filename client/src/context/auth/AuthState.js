@@ -1,5 +1,7 @@
-import React, {useReducer, useEffect} from 'react'
+//esLint-disable-next-line
+import React, {useReducer} from 'react'
 import axios from 'axios'
+import setAuthToken from '../../components/utils/setAuthToken'
 import AuthContext from './authContext'
 import authReducer from './authReducer'
 import * as actions from '../types'
@@ -13,14 +15,14 @@ const AuthState = (props) => {
   user: null,
  }
  const [state, dispatch] = useReducer(authReducer, initialState)
- // load user
+
  // Load User
  const loadUser = async () => {
-  // setAuthToken(localStorage.token)
-
+  if (localStorage.token) {
+   setAuthToken(localStorage.token)
+  }
   try {
    const res = await axios.get('/api/auth')
-
    dispatch({
     type: actions.USER_LOADED,
     payload: res.data,
@@ -29,6 +31,7 @@ const AuthState = (props) => {
    dispatch({type: actions.AUTH_ERROR})
   }
  }
+
  // register user
  const register = async (formData) => {
   const config = {
@@ -36,17 +39,13 @@ const AuthState = (props) => {
     'Content-Type': 'application/json',
    },
   }
-
   try {
    const res = await axios.post('/api/users', formData, config)
-
    dispatch({
     type: actions.REGISTER_SUCCESS,
     payload: res.data,
    })
-   console.log('token', res.data)
-
-   // loadUser()
+   loadUser()
   } catch (err) {
    dispatch({
     type: actions.REGISTER_FAIL,
@@ -56,13 +55,29 @@ const AuthState = (props) => {
  }
 
  // login user
- const login = () => {
-  console.log('login')
+ const login = async (formData) => {
+  const config = {
+   headers: {
+    'Content-Type': 'application/json',
+   },
+  }
+  try {
+   const res = await axios.post('/api/auth', formData, config)
+   dispatch({
+    type: actions.LOGIN_SUCCESS,
+    payload: res.data,
+   })
+
+   loadUser()
+  } catch (err) {
+   dispatch({
+    type: actions.LOGIN_FAIL,
+    payload: err.response.data.msg,
+   })
+  }
  }
  // logout
- const logout = () => {
-  console.log('logout')
- }
+ const logout = () => dispatch({type: actions.LOGOUT})
 
  // clear errors
  const clearErrors = () => dispatch({type: actions.CLEAR_ERRORS})
@@ -76,7 +91,9 @@ const AuthState = (props) => {
     error: state.error,
     register,
     login,
+    logout,
     clearErrors,
+    loadUser,
    }}
   >
    {props.children}

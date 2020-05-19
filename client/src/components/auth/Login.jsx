@@ -1,19 +1,44 @@
-import React, {useState} from 'react'
+import React, {useState, useContext, useEffect} from 'react'
+import AlertContext from '../../context/alert/AlertContext'
+import AuthContext from '../../context/auth/authContext'
 
-export const Login = () => {
+export const Login = (props) => {
+ const authContext = useContext(AuthContext)
+ const alertContext = useContext(AlertContext)
+
+ const {login, error, clearErrors, isAuthenticated} = authContext
+ const {setAlert} = alertContext
+
  const [user, setUser] = useState({
   email: '',
   password: '',
  })
- const {name, email, password, password2} = user
+ const {email, password} = user
 
+ //change vaLUES
  const onChange = (e) => {
   setUser({...user, [e.target.name]: e.target.value})
  }
+
+ //submit form
  const onSubmit = (e) => {
   e.preventDefault()
-  console.log('register', user)
+  if (!email === '' || password === '') {
+   setAlert('prosze wypelnic pola', 'danger')
+  }
+  login({email, password})
  }
+
+ //effect
+ useEffect(() => {
+  if (isAuthenticated) {
+   props.history.push('/')
+  }
+  if (error === 'Invalid Credentials') {
+   setAlert(error, 'danger')
+   clearErrors()
+  }
+ }, [error, isAuthenticated])
  return (
   <div className="form-conatainer">
    <h1>
