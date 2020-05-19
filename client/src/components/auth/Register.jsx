@@ -1,8 +1,12 @@
-import React, {useState, useContext} from 'react'
+import React, {useState, useContext, useEffect} from 'react'
 import AlertContext from '../../context/alert/AlertContext'
+import AuthContext from '../../context/auth/authContext'
 
-export const Register = () => {
+const Register = () => {
+ const authContext = useContext(AuthContext)
  const alertContext = useContext(AlertContext)
+
+ const {register, error, clearErrors} = authContext
  const {setAlert} = alertContext
  const [user, setUser] = useState({
   name: '',
@@ -23,9 +27,15 @@ export const Register = () => {
   } else if (password !== password2) {
    setAlert('  Hasla nie pasuja do siebie', 'danger')
   } else {
-   console.log('register', user)
+   register({name, email, password})
   }
  }
+ useEffect(() => {
+  if (error === 'User already exists') {
+   setAlert(error, 'danger')
+   clearErrors()
+  }
+ }, [error])
  return (
   <div className="form-conatainer">
    <h1>

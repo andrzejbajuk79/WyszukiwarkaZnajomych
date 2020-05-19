@@ -48,5 +48,6 @@
   "@types/react-router-dom": "^5.1.5",
   "@types/react-transition-group": "^4.2.4",
   "prettier": "^2.0.2"
- }
+ },
+ "proxy": "http://localhost:5000"
 }
