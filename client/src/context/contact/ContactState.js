@@ -53,7 +53,7 @@ const ContactState = (props) => {
  const clearContacts = () => {
   dispatch({type: actions.CLEAR_CONTACTS})
  }
-
+ ti
  //delete contact
  const deleteContact = async (id) => {
   try {
