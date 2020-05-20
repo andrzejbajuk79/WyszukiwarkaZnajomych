@@ -7,6 +7,7 @@
 # Zawartość
 **Backend**
 > Wlasny server, walidacja, Token, obsługa PUT/POST users/posts do vazy danych
+
 **FrontEnd**
 > Hooks,Context, Reducer, dodawanie uzytkownikow / pobieranie postow / pobieranie tOKENU Z BACKENDU
 
